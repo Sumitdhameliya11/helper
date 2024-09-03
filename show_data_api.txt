@@ -1,0 +1,28 @@
+//Show All Exam Data
+const show_all_exam_details = async (req, res) => {
+  try {
+    await config.query(
+      "select * from exam where isdelete = 'false'",
+      (err, result) => {
+        if (err) {
+          return res.status(400).json({
+            sucess: false,
+            message: "fetch exam details error",
+            err,
+          });
+        }
+        return res.status(200).json({
+          sucess: true,
+          message: "fetch exam data sucessfully",
+          Data: result,
+        });
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({
+      sucess: false,
+      message: "Internal Server Error!",
+      error: `${error.message}`,
+    });
+  }
+};

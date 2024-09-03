@@ -1,0 +1,34 @@
+require('./Model/Config');
+const express =  require('express');
+const app = express();
+const cors =  require('cors');
+const Student = require('./Routes/Student');
+const Company = require('./Routes/Company');
+const Developer = require('./Routes/Developer');
+const Institute = require('./Routes/Institute');
+const login =require('./Routes/User')
+const Admin = require("./Routes/Admin");
+app.use(express.json());
+app.use(cors());
+app.use('/upload', express.static('upload'));
+
+app.get('/', (req, res) => {
+    db.query('SELECT 1 + 1 AS solution', (err, results) => {
+      if (err) {
+        console.error('Error querying database:', err);
+        res.status(500).send('Database error');
+      } else {
+        res.send('The solution is: ' + results[0].solution);
+      }
+    });
+  });
+app.use('/api/student',Student);//student routes
+app.use('/api/company',Company);//company  routes
+app.use('/api/developer',Developer);//developer routes
+app.use('/api/institute',Institute);//institute routes
+app.use('/api/user',login);
+app.use('/api/admin',Admin);
+
+app.listen(4000,()=>{
+    console.log('server running on http://localhost:4000');
+})

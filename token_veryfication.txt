@@ -1,0 +1,22 @@
+const jwt = require('jsonwebtoken');
+const jwtkey = process.env.JWT_SECRETKEY;
+//verfy the auth token
+ const verifytoken = (req, res, next)=>{
+    let token = req.headers["authorization"];
+    if (token) {
+      token = token.split(" ")[2];
+      jwt.verify(token, jwtkey, (error, valid) => {
+        if (error) {
+          return res.status(401).send("provied valied  token");
+        } else {
+          next();
+        }
+      });
+    } else {
+      return res.status(403).send("authorized forbin");
+    }
+  }
+module.exports = {
+    verifytoken
+}
+  

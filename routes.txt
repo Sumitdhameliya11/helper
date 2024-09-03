@@ -1,0 +1,11 @@
+ //add exam data 
+ router.post('/add-exam',verifytoken,add_exam_deatils);
+ //show exam data 
+ router.get('/show-examdata',verifytoken,show_all_exam_details);
+ //show exam data id wise 
+ router.get('/show-examdata/:id',verifytoken,show_exam_details_by_id);
+ //update exam data 
+ router.put('/update-examdata/:id',verifytoken,update_exam_data);
+ //delete exam data
+ router.delete('/delete-examdata/:id',verifytoken,delete_exam_details);
+ 

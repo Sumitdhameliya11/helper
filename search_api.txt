@@ -1,0 +1,31 @@
+const search_exam_details_by_name = async (req, res) => {
+  try {
+    if(!req.params.title){
+        return res.status(404).json({
+            sucess:false,
+            message:"exam name not found",
+            err
+        })
+    }
+    await config.query("select * from exam where exam_name like ? and isdelete = 'false'",[`%${req.params.title.trim()}%`],(err,result)=>{
+        if(err){
+            return res.status(400).json({
+                sucess:false,
+                message:"fetch exam details error",
+                err
+            })
+        }
+        return res.status(200).json({
+            sucess:true,
+            message:"fetch exam details successfully",
+            Data:result
+        })
+    })
+  } catch (error) {
+    return res.status(500).json({
+      sucess: false,
+      message: "Internal Server Error!",
+      error: `${error.message}`,
+    });
+  }
+};

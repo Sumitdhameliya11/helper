@@ -1,0 +1,30 @@
+//delete exam deatils
+const delete_exam_details = async (req, res) => {
+  try {
+    if(!req.params.id){
+        return res.status(400).json({
+            sucess:false,
+            message:"id not found"
+        })
+    }
+    await config.query("update exam set isdelete = 'true' where id = ?"[req.params.id],(err,result)=>{
+        if(err){
+            return res.status(400).json({
+                sucess:false,
+                message:"delete exam details error",
+                err
+            })
+        }
+        return res.status(200).json({
+            sucess:true,
+            message:"delete exam sucessfully"
+        })
+    })
+  } catch (error) {
+    return res.status(500).json({
+      sucess: false,
+      message: "Internal Server Error!",
+      error: `${error.message}`,
+    });
+  }
+};

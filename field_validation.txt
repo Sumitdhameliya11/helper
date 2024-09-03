@@ -1,0 +1,23 @@
+//mobile number validation
+const isvalidmobilenumber = (mobilenumber) => {
+  const mobileRegex = /^\d{10}$/; // Regular expression for 10-digit number
+  return mobileRegex.test(mobilenumber); // Returns true if valid, false otherwise
+};
+
+//email validation
+
+const isvalidemail =(email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Basic email validation regex
+  return emailRegex.test(email); // Returns true if valid, false otherwise
+};
+
+//password valodation 
+const isPasswordvalidation = (password) =>{
+  return password.length >= 8;
+}
+
+module.exports ={
+    isvalidmobilenumber,
+    isvalidemail,
+    isPasswordvalidation
+}

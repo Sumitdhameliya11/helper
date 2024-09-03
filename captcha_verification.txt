@@ -1,0 +1,32 @@
+const verify_recapatcha = async (req, res,next) => {
+  try {
+    const { recaptchavalue } = req.body;
+    const recaptchasecretkey = process.env.SECRET_KEY;
+    // console.log(recaptchavalue);
+    // console.log(recaptchasecretkey);
+    const recaptchacheck = await fetch(
+      `https://www.google.com/recaptcha/api/siteverify?secret=${recaptchasecretkey}&response=${recaptchavalue}`,
+      {
+        method: "post",
+      }
+    );
+    const recaptchadata = await recaptchacheck.json();
+    if (!recaptchadata.success) {
+      return res.status(400).json({
+        sucess:false,
+        message:"recaptch verifiation failed"
+      });
+    }
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      sucess: false,
+      message: "Internal  server error",
+      error:`${error.message}`
+    });
+  }
+};
+
+module.exports={
+    verify_recapatcha
+}

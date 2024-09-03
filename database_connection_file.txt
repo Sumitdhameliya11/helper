@@ -1,0 +1,31 @@
+const mysql =  require('mysql');
+require('dotenv').config(); // Load environment variables from .env file
+const conn = mysql.createPool({
+    connectionLimit: 10, // Set the connection pool limit
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
+  });
+
+ // Test the database connection with a simple query
+ conn.query('SELECT 1 + 1 AS solution', (error, results, fields) => {
+    if (error) {
+      console.error('Database connection error:', error);
+      return;
+    }
+    console.log('Database connection established');
+  });
+  
+  
+    conn.on('error', function (err) {
+      console.error('Database error:', err);
+      if (err.code === 'PROTOCOL_CONNECTION_LOST') {
+        console.error('PROTOCOL_CONNECTION_LOST error. Reconnecting...');
+        // No need to handle manually, the pool will manage reconnecting
+      } else {
+        throw err;
+      }
+    });
+
+module.exports = conn;

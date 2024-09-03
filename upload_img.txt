@@ -1,0 +1,133 @@
+const multer = require("multer");
+const sharp = require("sharp");
+const path = require("path");
+const fs = require("fs");
+const { v4: uuidv4 } = require('uuid');
+// ==============upload image / docuemnt  =============
+
+// Ensure the upload directory exists
+const uploadDir = path.join(__dirname,'..',"upload");
+console.log(uploadDir);
+
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+// Multer setup for handling file uploads
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null,uploadDir);
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    },
+  }),
+}).fields([
+  { name: "stud_cover", maxCount: 1 },
+  { name: "stud_profile", maxCount: 1 },
+  { name: "stud_resume", maxCount: 1 },
+  { name: "career_image", maxCount: 1 },
+  { name: "image", maxCount: 1 },
+  { name: "image1", maxCount: 1 },
+  { name: "company_logo", maxCount: 1 },
+  { name: "institute_logo", maxCount: 1 },
+  { name: "company_icon", maxCount: 1 },
+  { name: "job_post_image", maxCount: 1 },
+  {name:'category_icon',maxCount:1},
+  {name:'sub_category_icon',maxCount:1},
+  {name:'institute_icon',maxCount:1},
+  {name:'institute_banner',maxCount:1},
+  {name:'aadhar_front_image',maxCount:1},
+  {name:'aadhar_back_image',maxCount:1},
+  {name:'scholarship',maxCount:1},
+  {name:'blog_image',maxCount:1},
+  {name:'testimonial',maxCount:1},
+  {name:'material_image',maxCount:1},
+  { name: 'career_pathway_icon', maxCount: 10 },
+  { name: 'certification_icon', maxCount: 1 },
+  { name: 'company_icon', maxCount: 1 },
+  { name: 'profe_icon', maxCount: 1 },
+  { name: 'job_icon', maxCount: 1 },
+  { name: 'hot_techno', maxCount: 1 },
+  { name: 'offbeat_icon', maxCount: 1 },
+  { name: 'refer_icon', maxCount: 1 },
+  { name: 'career_mems', maxCount: 1 },
+  { name: 'career_gallery', maxCount: 1 },
+  { name: 'path_icon', maxCount: 1 },
+  { name: 'exam_level_icon', maxCount: 1 },
+  { name: 'college_icon', maxCount: 1 },
+]);
+
+// Middleware to optimize images after upload
+const optimizeImages = async (req, res, next) => {
+  if (!req.files) return next();
+
+  const imageFields = [
+    "stud_cover",
+    "stud_profile",
+    "stud_resume",
+    "career_image",
+    "image",
+    "image1",
+    "company_logo",
+    "institute_logo",
+    "company_icon",
+    "job_post_image",
+    'category_icon',
+    'sub_category_icon',
+    'institute_icon',
+    'institute_banner',
+    'aadhar_front_image',
+    'aadhar_back_image',
+    'scholarship',
+    'blog_image',
+    'testimonial',
+    'material_image',
+    'college_icon',
+    'career_pathway_icon',
+    'certification_icon',
+    'company_icon',
+    'profe_icon',
+    'job_icon',
+    'hot_techno',
+    'offbeat_icon',
+    'refer_icon',
+    'career_mems',
+    'career_gallery',
+    'path_icon',
+    'exam_level_icon'
+  ];
+
+  try {
+    await Promise.all(
+      imageFields.map(async (field) => {
+        if (req.files[field]) {
+          const file = req.files[field][0];
+          const filePath = path.join(uploadDir, file.filename);
+          const tempFilePath = path.join(uploadDir, `${uuidv4()}-${file.filename}`);
+
+          if (fs.existsSync(filePath)) {
+            await sharp(filePath)
+              .resize({ width: 800 })
+              .toFile(tempFilePath); // Save optimized image to temp file
+              
+            // Replace original file with optimized file
+            fs.renameSync(tempFilePath, filePath);
+          } else {
+            throw new Error(`File not found: ${filePath}`);
+          }
+        }
+      })
+    );
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+}
+
+module.exports = {
+  upload,
+  optimizeImages
+};

@@ -1,0 +1,77 @@
+const add_exam_deatils = async (req, res) => {
+  try {
+    //check required fields blank or not
+    const requiredFields = [
+      "exam_name",
+      "course_name",
+      "exam_type",
+      "short_name",
+      "start_date",
+      "last_date",
+      "isdelete",
+    ];
+
+    const validateerror = await new Promise((resolve, reject) => {
+      validation(requiredFields, req.body)
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+    if (validateerror) {
+      return res.status(400).json({
+        sucess: false,
+        message: `Missing required fields not blank: ${validateerror.join(
+          ", "
+        )}`,
+      });
+    }
+    //collect the all request
+    const examdata = {
+      exam_name: req.body.exam_name,
+      course_name: req.body.course_name,
+      exam_type: req.body.exam_type,
+      short_name: req.body.short_name,
+      application_open: req.body.application_open,
+      mode_of_application: req.body.mode_of_application,
+      mode_of_exam: req.body.mode_of_exam,
+      exam_level: req.body.exam_level,
+      eligible_genders: req.body.eligible_genders,
+      frequency_of_exam: req.body.frequency_of_exam,
+      domicile_required: req.body.domicile_required,
+      date_pending: req.body.date_pending,
+      conducting_by: req.body.conducting_by,
+      application_procedure: req.body.application_procedure,
+      syllabus: req.body.syllabus,
+      start_date: req.body.start_date,
+      last_date: req.body.last_date,
+      isdelete: req.body.isdelete,
+    };
+    //add data in database
+    await config.query(
+      "insert into exam set ?",
+      [examdata],
+      (err, result, fields) => {
+        if (err) {
+          return res.status(400).json({
+            sucess: false,
+            message: "add exam data error",
+            err,
+          });
+        }
+        return res.status(200).json({
+          sucess: false,
+          message: "exam data add sucessfully",
+        });
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({
+      sucess: false,
+      message: "Internal Server Error!",
+      error: `${error.message}`,
+    });
+  }
+};

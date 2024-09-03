@@ -1,0 +1,91 @@
+//update exam data
+const update_exam_data = async (req, res) => {
+  try {
+    if(!req.params.id){
+        return res.status(404).json({
+            sucess:false,
+            message:"id not found"
+        })
+    }
+    //check required fields blank or not
+    const requiredFields = [
+      "exam_name",
+      "course_name",
+      "exam_type",
+      "short_name",
+      "start_date",
+      "last_date",
+      "isdelete",
+    ];
+
+    const validateerror = await new Promise((resolve, reject) => {
+      validation(requiredFields, req.body)
+        .then((res) => {
+          resolve(res);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+    if (validateerror) {
+      return res.status(400).json({
+        sucess: false,
+        message: `Missing required fields not blank: ${validateerror.join(
+          ", "
+        )}`,
+      });
+    }
+    //collect the all request
+    const examdata = {
+      exam_name: req.body.exam_name,
+      course_name: req.body.course_name,
+      exam_type: req.body.exam_type,
+      short_name: req.body.short_name,
+      application_open: req.body.application_open,
+      mode_of_application: req.body.mode_of_application,
+      mode_of_exam: req.body.mode_of_exam,
+      exam_level: req.body.exam_level,
+      eligible_genders: req.body.eligible_genders,
+      frequency_of_exam: req.body.frequency_of_exam,
+      domicile_required: req.body.domicile_required,
+      date_pending: req.body.date_pending,
+      conducting_by: req.body.conducting_by,
+      application_procedure: req.body.application_procedure,
+      syllabus: req.body.syllabus,
+      start_date: req.body.start_date,
+      last_date: req.body.last_date,
+      isdelete: req.body.isdelete,
+    };
+    // Filter out not undefined or null fields without deleting keys
+    const field = Object.keys(examdata).filter(
+      (key) => examdata[key] !== undefined && examdata[key] !== null
+    );
+    const value = field.map((key) => examdata[key]);
+    const updateQuery = `update collage set ${field
+      .map((field) => `${field} = ?`)
+      .join(", ")} where id = ?`;
+    await config.query(
+      updateQuery,
+      [...value, req.params.id],
+      (err, result, fields) => {
+        if (err) {
+          return res.status(400).json({
+            sucess: false,
+            message: "update exam details error",
+            err,
+          });
+        }
+        return res.status(200).json({
+          sucess: true,
+          message: "Save Change Successfully",
+        });
+      }
+    );
+  } catch (error) {
+    return res.status(500).json({
+      sucess: false,
+      message: "Internal Server Error!",
+      error: `${error.message}`,
+    });
+  }
+};
