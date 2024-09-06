@@ -63,3 +63,11 @@ const show_exam_details_by_id = async (req, res) => {
       });
     }
   };
+
+//for coustome messagedisplay when data not come 
+   if(result[0].percentage_required == null){
+          return res.status(200).json({
+            sucess:true,
+            message:"This exam has no relevant official information for Percentage Required. However, you may check the sources shared on"
+          })
+        }

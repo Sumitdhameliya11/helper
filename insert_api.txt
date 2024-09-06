@@ -75,3 +75,8 @@ const add_exam_deatils = async (req, res) => {
     });
   }
 };
+
+
+//file upload 
+
+req.files?.["path_icon"]?.[0].filename
